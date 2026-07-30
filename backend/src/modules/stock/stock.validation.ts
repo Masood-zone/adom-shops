@@ -1,35 +1,82 @@
 import { z } from "zod";
 
-export const stockAdjustmentSchema = z.object({
-  productId: z.coerce.number().int().positive(),
+import { stockMovementTypes } from "../../db/schema/index.js";
 
-  type: z.enum(["RESTOCK", "ADJUSTMENT_IN", "ADJUSTMENT_OUT"]),
+const optionalDate = z.preprocess(
+  (value) => {
+    if (value === "" || value === undefined || value === null) {
+      return undefined;
+    }
+
+    return value;
+  },
+  z.coerce.date().optional(),
+);
+
+export const stockAdjustmentSchema = z.object({
+  productId: z.coerce
+    .number()
+    .int()
+    .positive("Product ID must be positive"),
+
+  type: z.enum([
+    "RESTOCK",
+    "ADJUSTMENT_IN",
+    "ADJUSTMENT_OUT",
+  ]),
 
   quantity: z.coerce
     .number()
     .int()
     .positive("Quantity must be greater than zero"),
 
-  reason: z.string().trim().min(3).max(255),
+  reason: z
+    .string()
+    .trim()
+    .min(3, "Reason must contain at least 3 characters")
+    .max(255, "Reason cannot exceed 255 characters"),
 });
 
-export const stockMovementQuerySchema = z.object({
-  productId: z.coerce.number().int().positive().optional(),
+export const stockMovementQuerySchema = z
+  .object({
+    productId: z.coerce
+      .number()
+      .int()
+      .positive()
+      .optional(),
 
-  type: z
-    .enum([
-      "OPENING_STOCK",
-      "RESTOCK",
-      "ADJUSTMENT_IN",
-      "ADJUSTMENT_OUT",
-      "SALE",
-      "SALE_VOID",
-    ])
-    .optional(),
+    type: z.enum(stockMovementTypes).optional(),
 
-  page: z.coerce.number().int().positive().default(1),
+    from: optionalDate,
+    to: optionalDate,
 
-  limit: z.coerce.number().int().min(1).max(100).default(20),
-});
+    page: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(1),
 
-export type StockAdjustmentInput = z.infer<typeof stockAdjustmentSchema>;
+    limit: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(100)
+      .default(20),
+  })
+  .superRefine((value, context) => {
+    if (value.from && value.to && value.from > value.to) {
+      context.addIssue({
+        code: "custom",
+        path: ["to"],
+        message: "The end date cannot be before the start date",
+      });
+    }
+  });
+
+export type StockAdjustmentInput = z.infer<
+  typeof stockAdjustmentSchema
+>;
+
+export type StockMovementQuery = z.infer<
+  typeof stockMovementQuerySchema
+>;

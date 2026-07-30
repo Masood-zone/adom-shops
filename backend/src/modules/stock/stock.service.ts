@@ -1,35 +1,93 @@
-import { z } from "zod";
+import { eq } from "drizzle-orm";
 
-export const stockAdjustmentSchema = z.object({
-  productId: z.coerce.number().int().positive(),
+import { AppError } from "../../common/errors/app-error.js";
+import { db } from "../../db/index.js";
+import {
+  products,
+  stockMovements,
+} from "../../db/schema/index.js";
 
-  type: z.enum(["RESTOCK", "ADJUSTMENT_IN", "ADJUSTMENT_OUT"]),
+import * as stockRepository from "./stock.repository.js";
 
-  quantity: z.coerce
-    .number()
-    .int()
-    .positive("Quantity must be greater than zero"),
+import type {
+  StockAdjustmentInput,
+  StockMovementQuery,
+} from "./stock.validation.js";
 
-  reason: z.string().trim().min(3).max(255),
-});
+export async function adjustStock(
+  input: StockAdjustmentInput,
+) {
+  return db.transaction(
+    async (tx) => {
+      const [product] = await tx
+        .select()
+        .from(products)
+        .where(eq(products.id, input.productId))
+        .limit(1)
+        .for("update");
 
-export const stockMovementQuerySchema = z.object({
-  productId: z.coerce.number().int().positive().optional(),
+      if (!product) {
+        throw new AppError(404, "Product not found");
+      }
 
-  type: z
-    .enum([
-      "OPENING_STOCK",
-      "RESTOCK",
-      "ADJUSTMENT_IN",
-      "ADJUSTMENT_OUT",
-      "SALE",
-      "SALE_VOID",
-    ])
-    .optional(),
+      if (!product.isActive) {
+        throw new AppError(
+          400,
+          "Stock cannot be adjusted for an inactive product",
+        );
+      }
 
-  page: z.coerce.number().int().positive().default(1),
+      const increasesStock =
+        input.type === "RESTOCK" ||
+        input.type === "ADJUSTMENT_IN";
 
-  limit: z.coerce.number().int().min(1).max(100).default(20),
-});
+      const newStock = increasesStock
+        ? product.quantityInStock + input.quantity
+        : product.quantityInStock - input.quantity;
 
-export type StockAdjustmentInput = z.infer<typeof stockAdjustmentSchema>;
+      if (newStock < 0) {
+        throw new AppError(
+          400,
+          "Stock cannot be reduced below zero",
+        );
+      }
+
+      await tx
+        .update(products)
+        .set({
+          quantityInStock: newStock,
+        })
+        .where(eq(products.id, product.id));
+
+      const [movementId] = await tx
+        .insert(stockMovements)
+        .values({
+          productId: product.id,
+          type: input.type,
+          quantity: input.quantity,
+          previousStock: product.quantityInStock,
+          newStock,
+          reason: input.reason,
+        })
+        .$returningId();
+
+      return {
+        movementId: movementId?.id,
+        productId: product.id,
+        productName: product.name,
+        previousStock: product.quantityInStock,
+        newStock,
+      };
+    },
+    {
+      isolationLevel: "serializable",
+      accessMode: "read write",
+    },
+  );
+}
+
+export function getStockMovements(
+  query: StockMovementQuery,
+) {
+  return stockRepository.listMovements(query);
+}

@@ -16,6 +16,7 @@ export async function listCategories(
 
   response.status(200).json({
     success: true,
+    message: "Categories retrieved successfully",
     data: categories,
   });
 }
@@ -30,6 +31,7 @@ export async function getCategory(
 
   response.status(200).json({
     success: true,
+    message: "Category retrieved successfully",
     data: category,
   });
 }

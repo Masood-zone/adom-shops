@@ -46,7 +46,7 @@ app.get("/", (_request, response) => {
   });
 });
 
-app.use("/api/", apiRouter);
+app.use("/api/v1", apiRouter);
 
 app.use(notFoundHandler);
 

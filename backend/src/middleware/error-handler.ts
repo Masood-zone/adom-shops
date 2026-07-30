@@ -73,6 +73,27 @@ export function errorHandler(
 
       return;
     }
+
+    if (
+      error.code === "ER_LOCK_DEADLOCK" ||
+      error.code === "ER_LOCK_WAIT_TIMEOUT"
+    ) {
+      response.status(409).json({
+        success: false,
+        message: "The inventory changed during this operation. Please retry.",
+      });
+
+      return;
+    }
+
+    if (error.code === "ER_NO_REFERENCED_ROW_2") {
+      response.status(400).json({
+        success: false,
+        message: "A referenced database record does not exist",
+      });
+
+      return;
+    }
   }
 
   console.error(error);
