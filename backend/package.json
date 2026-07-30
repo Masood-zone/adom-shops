@@ -25,13 +25,7 @@
   ],
   "author": "Masood Acheampong",
   "license": "ISC",
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "^11.12.0",
-      "onFail": "download"
-    }
-  },
+  "packageManager": "pnpm@10.28.0",
   "type": "module",
   "dependencies": {
     "cors": "^2.8.6",
