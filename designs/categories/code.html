@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Adom Shops - Categories Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e1e3e4",
+                        "surface-container-high": "#e7e8e9",
+                        "surface": "#f8f9fa",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#2e3132",
+                        "inverse-primary": "#62df7d",
+                        "outline-variant": "#bdcaba",
+                        "primary-fixed-dim": "#62df7d",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary-container": "#a36700",
+                        "surface-container-low": "#f3f4f5",
+                        "on-primary": "#ffffff",
+                        "primary": "#006b2c",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-secondary-fixed": "#141b2b",
+                        "surface-dim": "#d9dadb",
+                        "inverse-on-surface": "#f0f1f2",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-tertiary-fixed": "#2a1700",
+                        "surface-tint": "#006e2d",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#f7fff2",
+                        "on-primary-fixed-variant": "#005320",
+                        "secondary-fixed": "#dce2f7",
+                        "primary-container": "#00873a",
+                        "tertiary": "#825100",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "background": "#f8f9fa",
+                        "on-surface-variant": "#3e4a3d",
+                        "secondary": "#575e70",
+                        "on-background": "#191c1d",
+                        "surface-container": "#edeeef",
+                        "surface-container-highest": "#e1e3e4",
+                        "outline": "#6e7b6c",
+                        "primary-fixed": "#7ffc97",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c1d",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#002109",
+                        "secondary-container": "#d9dff5",
+                        "on-secondary-container": "#5c6274",
+                        "surface-bright": "#f8f9fa"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "14px",
+                        "lg": "14px",
+                        "xl": "18px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "1.5rem",
+                        "sidebar-width": "280px",
+                        "container-padding": "2rem",
+                        "unit": "4px",
+                        "margin-mobile": "1rem"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-base": ["Inter"],
+                        "mono-sm": ["JetBrains Mono"],
+                        "label-md": ["Inter"],
+                        "headline-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-base": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "mono-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-active {
+            background-color: #edeeef;
+            color: #006b2c;
+            font-weight: 700;
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f0f1f2 25%, #e1e3e4 50%, #f0f1f2 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-screen w-sidebar-width border-r border-outline-variant bg-surface-container-lowest flex flex-col h-full py-6 px-4 z-50">
+<div class="mb-10 px-4">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">Adom Shops</h1>
+<p class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-1">Internal Admin</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-secondary font-label-md text-label-md hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- ACTIVE: Categories -->
+<a class="flex items-center gap-3 px-4 py-3 sidebar-active font-label-md text-label-md scale-[0.98] transition-transform duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">category</span>
+<span>Categories</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary font-label-md text-label-md hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Products</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary font-label-md text-label-md hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">warehouse</span>
+<span>Stock Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary font-label-md text-label-md hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span>New Sale</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary font-label-md text-label-md hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span>Sales History</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary font-label-md text-label-md hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span>Reports</span>
+</a>
+</nav>
+<div class="mt-auto px-4 py-4 border-t border-outline-variant flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a corporate administrator in a bright office setting, wearing a neutral blazer, with soft natural light illuminating the scene, expressing reliability and competence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLR_lJOh18YD9cCHqpo15hJjlfYpoP0s2LO5anGHecf0GydEV4VSOHnpVmHCRVfcb1-hh23ULwxz1vm94UASL49zYs6nuHrJtpBks_66fJ7EO5DgpcDaXrfpZRBgR-9Hb9h_3Z5BKFpnCgHEPtg3GdUp6oUrfE0gcVaxA7nXx-jTS8nU1PpScveq1Vv8b3AU7N1n1LJ2iYWZ8DH6OZHDMBmnZ0oWc3it5wXlyfihjBfbMSE2C0LkM"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Alex Admin</p>
+<p class="text-[10px] text-secondary uppercase font-bold tracking-tighter">Shop Manager</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-sidebar-width min-h-screen">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-40 w-full bg-surface-container-lowest flex items-center justify-between h-16 px-gutter border-b border-outline-variant">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-base focus:ring-2 focus:ring-primary focus:outline-none transition-all" placeholder="Search categories..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-highest rounded-full transition-all duration-200">
+<span class="material-symbols-outlined text-secondary">dark_mode</span>
+</button>
+<button class="p-2 hover:bg-surface-container-highest rounded-full transition-all duration-200 relative">
+<span class="material-symbols-outlined text-secondary">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 hover:bg-surface-container-highest rounded-full transition-all duration-200">
+<span class="material-symbols-outlined text-secondary">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Canvas Container -->
+<div class="p-container-padding">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Categories</h2>
+<p class="font-body-lg text-body-lg text-secondary">Organize your inventory and simplify product tracking.</p>
+</div>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-6 py-2.5 font-label-md text-label-md rounded-lg hover:bg-primary-container transition-all active:scale-95" onclick="toggleModal('add-category-modal')">
+<span class="material-symbols-outlined">add</span>
+                    Add Category
+                </button>
+</div>
+<!-- Bento Grid View / Main Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+<!-- Table Controls -->
+<div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between">
+<span class="font-label-md text-label-md text-secondary">Total: 12 Categories</span>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container-low border border-outline-variant rounded-lg transition-colors">
+<span class="material-symbols-outlined text-secondary text-[20px]">filter_list</span>
+</button>
+<button class="p-2 hover:bg-surface-container-low border border-outline-variant rounded-lg transition-colors">
+<span class="material-symbols-outlined text-secondary text-[20px]">download</span>
+</button>
+</div>
+</div>
+<!-- Table Content -->
+<div class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-left">
+<th class="px-6 py-4 font-label-md text-label-md text-secondary uppercase tracking-wider">Category Name</th>
+<th class="px-6 py-4 font-label-md text-label-md text-secondary uppercase tracking-wider">Description</th>
+<th class="px-6 py-4 font-label-md text-label-md text-secondary uppercase tracking-wider">Last Updated</th>
+<th class="px-6 py-4 font-label-md text-label-md text-secondary uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody id="category-table-body">
+<!-- Skeleton Rows (shown initially) -->
+<tr class="skeleton-row">
+<td class="px-6 py-4"><div class="skeleton h-5 w-32 rounded"></div></td>
+<td class="px-6 py-4"><div class="skeleton h-5 w-48 rounded"></div></td>
+<td class="px-6 py-4"><div class="skeleton h-5 w-24 rounded"></div></td>
+<td class="px-6 py-4 text-right"><div class="skeleton h-8 w-20 rounded-lg ml-auto"></div></td>
+</tr>
+<tr class="skeleton-row">
+<td class="px-6 py-4"><div class="skeleton h-5 w-40 rounded"></div></td>
+<td class="px-6 py-4"><div class="skeleton h-5 w-56 rounded"></div></td>
+<td class="px-6 py-4"><div class="skeleton h-5 w-24 rounded"></div></td>
+<td class="px-6 py-4 text-right"><div class="skeleton h-8 w-20 rounded-lg ml-auto"></div></td>
+</tr>
+<tr class="skeleton-row">
+<td class="px-6 py-4"><div class="skeleton h-5 w-28 rounded"></div></td>
+<td class="px-6 py-4"><div class="skeleton h-5 w-64 rounded"></div></td>
+<td class="px-6 py-4"><div class="skeleton h-5 w-24 rounded"></div></td>
+<td class="px-6 py-4 text-right"><div class="skeleton h-8 w-20 rounded-lg ml-auto"></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Empty State (Hidden by default) -->
+<div class="hidden flex flex-col items-center justify-center py-20 px-6 text-center" id="empty-state">
+<div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mb-4 text-outline">
+<span class="material-symbols-outlined text-[32px]">folder_off</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">No categories found</h3>
+<p class="text-secondary font-body-base max-w-xs mt-2">Adjust your search or add a new category to get started.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Delete Alert Dialog -->
+<div class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4" id="delete-dialog">
+<div class="absolute inset-0 bg-inverse-surface/40 backdrop-blur-sm transition-opacity" onclick="toggleModal('delete-dialog')"></div>
+<div class="relative bg-surface-container-lowest w-full max-w-md p-8 rounded-xl border border-outline-variant shadow-lg animate-in zoom-in duration-200">
+<div class="flex items-center gap-4 mb-4 text-error">
+<span class="material-symbols-outlined text-[32px]">warning</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Delete Category?</h4>
+</div>
+<p class="font-body-base text-secondary mb-6 leading-relaxed">
+                This action cannot be undone. Please note that the deletion <span class="font-bold">may fail</span> if there are products currently linked to this category.
+            </p>
+<div class="flex justify-end gap-3">
+<button class="px-4 py-2 font-label-md text-label-md text-secondary hover:bg-surface-container-low rounded-lg transition-colors" onclick="toggleModal('delete-dialog')">Cancel</button>
+<button class="px-6 py-2 font-label-md text-label-md bg-error text-on-error rounded-lg hover:opacity-90 transition-all" onclick="confirmDelete()">Delete Permanently</button>
+</div>
+</div>
+</div>
+<!-- Add/Edit Category Modal (Ghost implementation) -->
+<div class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4" id="add-category-modal">
+<div class="absolute inset-0 bg-inverse-surface/40 backdrop-blur-sm transition-opacity" onclick="toggleModal('add-category-modal')"></div>
+<div class="relative bg-surface-container-lowest w-full max-w-lg p-8 rounded-xl border border-outline-variant shadow-lg">
+<div class="flex items-center justify-between mb-6">
+<h4 class="font-headline-sm text-headline-sm text-on-surface">New Category</h4>
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors" onclick="toggleModal('add-category-modal')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="space-y-4">
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5">Name</label>
+<input class="w-full px-4 py-2 border border-outline-variant rounded-lg text-body-base focus:ring-2 focus:ring-primary focus:outline-none" placeholder="e.g. Electronics" type="text"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1.5">Description</label>
+<textarea class="w-full px-4 py-2 border border-outline-variant rounded-lg text-body-base focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Category details..." rows="3"></textarea>
+</div>
+</div>
+<div class="mt-8 flex justify-end gap-3">
+<button class="px-4 py-2 font-label-md text-label-md text-secondary hover:bg-surface-container-low rounded-lg transition-colors" onclick="toggleModal('add-category-modal')">Cancel</button>
+<button class="px-6 py-2 font-label-md text-label-md bg-primary text-on-primary rounded-lg hover:opacity-90 transition-all">Save Category</button>
+</div>
+</div>
+</div>
+<script>
+        // Mock data
+        const categories = [
+            { id: 1, name: "Electronics", description: "Mobile phones, laptops, and peripheral accessories", updated: "Oct 12, 2023" },
+            { id: 2, name: "Groceries", description: "Fresh produce, dairy, and essential food items", updated: "Oct 11, 2023" },
+            { id: 3, name: "Fashion", description: "Men's and women's apparel and lifestyle items", updated: "Oct 10, 2023" },
+            { id: 4, name: "Home Appliances", description: "Large and small electric appliances for household use", updated: "Oct 08, 2023" },
+            { id: 5, name: "Stationery", description: "Office supplies, notebooks, and writing instruments", updated: "Oct 05, 2023" }
+        ];
+
+        // UI Interactions
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.toggle('hidden');
+        }
+
+        let pendingDeleteId = null;
+        function openDeleteDialog(id) {
+            pendingDeleteId = id;
+            toggleModal('delete-dialog');
+        }
+
+        function confirmDelete() {
+            // Simulated delete
+            console.log("Deleting category:", pendingDeleteId);
+            toggleModal('delete-dialog');
+            // Re-render
+            const updated = categories.filter(c => c.id !== pendingDeleteId);
+            renderTable(updated);
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('category-table-body');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            tbody.innerHTML = data.map(cat => `
+                <tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+                    <td class="px-6 py-4 font-label-md text-label-md text-on-surface font-semibold">${cat.name}</td>
+                    <td class="px-6 py-4 font-body-base text-secondary max-w-xs truncate">${cat.description}</td>
+                    <td class="px-6 py-4 font-body-base text-secondary">${cat.updated}</td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="p-1.5 text-secondary hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                            </button>
+                            <button onclick="openDeleteDialog(${cat.id})" class="p-1.5 text-secondary hover:text-error transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Simulate initial loading
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                renderTable(categories);
+            }, 1200); // Realistic 1.2s skeleton state
+        });
+
+        // Client-side search
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = categories.filter(c => 
+                c.name.toLowerCase().includes(term) || 
+                c.description.toLowerCase().includes(term)
+            );
+            renderTable(filtered);
+        });
+    </script>
+</body></html>
