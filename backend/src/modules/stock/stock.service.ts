@@ -79,10 +79,6 @@ export async function adjustStock(
         newStock,
       };
     },
-    {
-      isolationLevel: "serializable",
-      accessMode: "read write",
-    },
   );
 }
 

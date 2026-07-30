@@ -90,7 +90,7 @@ export async function getSalesByDate(
 ) {
   const saleDate = sql<string>`
     date_format(${sales.soldAt}, '%Y-%m-%d')
-  `;
+  `.as("sale_date");
 
   return db
     .select({
@@ -108,8 +108,8 @@ export async function getSalesByDate(
         ...buildCompletedSaleConditions(query),
       ),
     )
-    .groupBy(saleDate)
-    .orderBy(asc(saleDate));
+    .groupBy(sql.raw("sale_date"))
+    .orderBy(asc(sql.raw("sale_date")));
 }
 
 export async function getTopProducts(
@@ -357,5 +357,4 @@ export async function getStockMovementReport(
     ),
   };
 }
-
 

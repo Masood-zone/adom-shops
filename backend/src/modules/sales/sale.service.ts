@@ -188,10 +188,6 @@ export async function createSale(
         saleNumber,
       };
     },
-    {
-      isolationLevel: "serializable",
-      accessMode: "read write",
-    },
   );
 
   return getSale(created.id);
@@ -284,10 +280,6 @@ export async function voidSale(
           voidReason: input.reason,
         })
         .where(eq(sales.id, sale.id));
-    },
-    {
-      isolationLevel: "serializable",
-      accessMode: "read write",
     },
   );
 
