@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { ArrowLeft, ImageIcon, Save } from "lucide-react"
+import { ArrowLeft, Save } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { z } from "zod"
@@ -145,7 +145,9 @@ export function ProductFormPage() {
     return <LoadingState label="Loading product…" />
   }
   if (isEditing && product.isError) {
-    return <ErrorState error={product.error} onRetry={() => product.refetch()} />
+    return (
+      <ErrorState error={product.error} onRetry={() => product.refetch()} />
+    )
   }
 
   return (
@@ -161,7 +163,9 @@ export function ProductFormPage() {
         description="Keep catalog information accurate and easy to find."
       />
       {mutation.error ? (
-        <Notice tone="danger">{normalizeApiError(mutation.error).message}</Notice>
+        <Notice tone="danger">
+          {normalizeApiError(mutation.error).message}
+        </Notice>
       ) : null}
 
       <form
@@ -198,13 +202,13 @@ export function ProductFormPage() {
               {...register("description")}
             />
           </Field>
-          <div className="rounded-[var(--radius)] border border-dashed p-6 text-center">
+          {/* <div className="rounded-[var(--radius)] border border-dashed p-6 text-center">
             <ImageIcon className="mx-auto size-7 text-muted-foreground" />
             <p className="mt-2 text-sm font-medium">Product image unavailable</p>
             <p className="mt-1 text-xs text-muted-foreground">
               The current API does not store product images.
             </p>
-          </div>
+          </div> */}
         </Card>
 
         <div className="space-y-6">
@@ -229,10 +233,7 @@ export function ProductFormPage() {
               />
             </Field>
             {!isEditing ? (
-              <Field
-                label="Opening stock"
-                error={errors.openingStock?.message}
-              >
+              <Field label="Opening stock" error={errors.openingStock?.message}>
                 <Input
                   inputMode="numeric"
                   min="0"
