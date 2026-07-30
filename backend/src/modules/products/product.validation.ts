@@ -45,9 +45,9 @@ const productFields = {
 
   unitPrice: moneySchema,
 
-  reorderLevel: z.coerce.number().int().min(0).default(5),
+  reorderLevel: z.coerce.number().int().min(0),
 
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 };
 
 export const productIdSchema = z.object({
@@ -56,6 +56,8 @@ export const productIdSchema = z.object({
 
 export const createProductSchema = z.object({
   ...productFields,
+  reorderLevel: productFields.reorderLevel.default(5),
+  isActive: productFields.isActive.default(true),
   openingStock: z.coerce.number().int().min(0).default(0),
 });
 

@@ -38,6 +38,18 @@ pnpm db:studio
 pnpm db:seed
 ```
 
+The API is served under `/api/v1`. Its main resources are:
+
+- `/categories` and `/products` for catalog management
+- `/stock/adjustments` and `/stock/movements` for inventory control
+- `/sales` for checkout, receipts, and voiding
+- `/dashboard/summary` for operational totals
+- `/reports` for sales, inventory value, low-stock, and movement reports
+
+Product creation accepts `openingStock`; later quantity changes must go through
+the stock-adjustment endpoint. Running `pnpm db:seed` is safe to repeat and
+adds demo inventory only when its SKUs do not already exist.
+
 ## Frontend setup
 
 ```powershell

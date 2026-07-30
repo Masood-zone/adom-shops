@@ -32,7 +32,7 @@ async function startServer(): Promise<void> {
       void shutdown("SIGTERM");
     });
   } catch (error) {
-    console.error("StockFlow API could not start:", error);
+    console.error("Adom Shops API could not start:", error);
 
     await pool.end();
     process.exit(1);

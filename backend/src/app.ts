@@ -42,7 +42,7 @@ app.use(
 app.get("/", (_request, response) => {
   response.status(200).json({
     success: true,
-    message: "Welcome to the StockFlow API",
+    message: "Welcome to the Adom Shops API",
   });
 });
 
