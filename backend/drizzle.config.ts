@@ -1,8 +1,17 @@
 import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is not defined");
+const requiredDatabaseVariables = [
+  "DB_HOST",
+  "DB_USERNAME",
+  "DB_PASSWORD",
+  "DB_DATABASE",
+] as const;
+
+for (const variable of requiredDatabaseVariables) {
+  if (!process.env[variable]) {
+    throw new Error(`${variable} is not defined`);
+  }
 }
 
 export default defineConfig({
@@ -11,7 +20,15 @@ export default defineConfig({
   out: "./drizzle",
 
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    host: process.env.DB_HOST!,
+    port: Number(process.env.DB_PORT ?? 4000),
+    user: process.env.DB_USERNAME!,
+    password: process.env.DB_PASSWORD!,
+    database: process.env.DB_DATABASE!,
+    ssl: {
+      minVersion: "TLSv1.2",
+      rejectUnauthorized: true,
+    },
   },
 
   strict: true,

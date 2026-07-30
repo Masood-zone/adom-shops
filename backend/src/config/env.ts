@@ -10,7 +10,11 @@ const envSchema = z.object({
 
   CLIENT_URL: z.string().url().default("http://localhost:5173"),
 
-  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  DB_HOST: z.string().min(1, "DB_HOST is required"),
+  DB_PORT: z.coerce.number().int().positive().default(4000),
+  DB_USERNAME: z.string().min(1, "DB_USERNAME is required"),
+  DB_PASSWORD: z.string().min(1, "DB_PASSWORD is required"),
+  DB_DATABASE: z.string().min(1, "DB_DATABASE is required"),
 });
 
 const result = envSchema.safeParse(process.env);
